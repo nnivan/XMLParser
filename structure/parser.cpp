@@ -63,6 +63,51 @@ struct Element{
     }
 };
 
+class XMLStructure{
+public:
+    string toString(Element &element, int tabs = 0){
+
+        string ret;
+
+        if(this->meta.size() != 0){
+            for(int i = 0; i < tabs; i++) ret += "\t";
+
+            ret += "<?xml";
+
+            for(int i = 0; i < this->meta.size(); i++)
+                ret += this->meta[i].toString();
+
+            ret += "?>\n";
+        }
+
+        for(int i = 0; i < tabs; i++) ret += "\t";
+
+        ret += "<" + element.key;
+
+        for(int i = 0; i < element.attributes.size(); i++)
+            ret += element.attributes[i]->toString();
+
+        ret += ">\n";
+
+        if(element.text != ""){
+            for(int i = 0; i <= tabs; i++) ret += "\t";
+            ret += element.text + "\n";
+        }
+
+        for(int i = 0; i < element.elements.size(); i++)
+            ret += element.elements[i]->toString(tabs + 1);
+
+        for(int i = 0; i < tabs; i++) ret += "\t";
+
+        ret += "</" + element.key + ">\n";
+
+        return ret;
+    }
+public:
+    Element root;
+    vector<Attribute> meta;
+};
+
 int main (){
 
     Element root("people");
@@ -82,8 +127,14 @@ int main (){
     person1.add_element(name1);
     person2.add_element(name2);
 
+    XMLStructure xmls;
 
-    cout << root.toString() << endl;
+    xmls.root = root;
+    xmls.meta.push_back(Attribute("version", "1.0"));
+    xmls.meta.push_back(Attribute("encoding", "UTF-8"));
+
+
+    cout << xmls.toString(xmls.root) << endl;
     cout << "sizeof(root): " << sizeof(root) << endl;
     return 0;
 }

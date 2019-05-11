@@ -1,7 +1,7 @@
 classes
-	XMLReader
-	XMLValidator
-	XMLParser
+	
+	
+	XMLStructure
 	Elements
 	Attributes
 
