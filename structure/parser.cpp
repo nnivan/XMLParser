@@ -133,9 +133,8 @@ int main (){
     xmls.meta.push_back(Attribute("version", "1.0"));
     xmls.meta.push_back(Attribute("encoding", "UTF-8"));
 
-
     cout << xmls.toString(xmls.root) << endl;
-    cout << "sizeof(root): " << sizeof(root) << endl;
+    cout << "sizeof(xmls): " << sizeof(xmls) << endl;
     return 0;
 }
 /**
