@@ -1,13 +1,44 @@
 classes
 	
-	Elements
-	MetaElement
-	SingleLineElement
-	Attributes
-	Comments
+	Attribute
+	Element
+	TextElement
+	TagElement
+	CommentElement
+	XMLStructure
 	
+
 relations
 	
+	TagElement is-a Element has-a Attribute
+	TextElement is-a Element
+	CommentElement is-a Element
+	XMLStructure has-a Attribute has-a Element
+
+
 state
+
+	Attribute
+		string name
+		string value
+
+	Element
+		Element* parent
+
+	TagElement
+		string id
+	    string key
+	    Attribute* attributes[]
+	    Element* childElements[]
+
+	TextElement
+	    string text
+
+	CommentElement
+	    string text
+
+	XMLStructure
+	    Attribute* prolog[]
+	    Element root
 
 interface
