@@ -76,6 +76,8 @@ interface
 	
 		void addPrologAttribute(Attribute &attribute)
 		void setPrologAttributeValue(string name, string newValue)
+		bool hasPrologAttributeValue(string name)
+		string getPrologAttributeValue(string name)
 		void removePrologAttributeValue(string name)
 
 		void addAttribute(string id, Attribute &attribute)
