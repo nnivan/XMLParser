@@ -19,20 +19,20 @@ struct Attribute{
 struct Element{
     string key;
     string text;
-    vector<Attribute> attributes;
-    vector<Element> elements;
+    vector<Attribute*> attributes;
+    vector<Element*> elements;
 
     Element(string key = "", string text = ""){
         this->key = key;
         this->text = text;
     }
 
-    void add_attribute(Attribute attribute){
-        this->attributes.push_back(attribute);
+    void add_attribute(Attribute &attribute){
+        this->attributes.push_back(&attribute);
     }
 
-    void add_element(Element element){
-        this->elements.push_back(element);
+    void add_element(Element &element){
+        this->elements.push_back(&element);
     }
 
     string toString(int tabs = 0){
@@ -43,7 +43,7 @@ struct Element{
         ret += "<" + key;
 
         for(int i = 0; i < attributes.size(); i++)
-            ret += attributes[i].toString();
+            ret += attributes[i]->toString();
 
         ret += ">\n";
 
@@ -53,7 +53,7 @@ struct Element{
         }
 
         for(int i = 0; i < elements.size(); i++)
-            ret += elements[i].toString(tabs + 1);
+            ret += elements[i]->toString(tabs + 1);
 
         for(int i = 0; i < tabs; i++) ret += "\t";
 
@@ -70,17 +70,21 @@ int main (){
     Element person2("person");
     Element name1("name", "Alice");
     Element name2("name", "Bob");
+    Attribute gender1("gender", "female");
+    Attribute gender2("gender", "male");
 
-    person1.add_attribute(Attribute("gender", "female"));
-    person2.add_attribute(Attribute("gender", "male"));
-
-    person1.add_element(name1);
-    person2.add_element(name2);
+    person1.add_attribute( gender1 );
+    person2.add_attribute( gender2 );
 
     root.add_element(person1);
     root.add_element(person2);
 
+    person1.add_element(name1);
+    person2.add_element(name2);
+
+
     cout << root.toString() << endl;
+    cout << "sizeof(root): " << sizeof(root) << endl;
     return 0;
 }
 /**
