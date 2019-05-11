@@ -2,8 +2,8 @@ classes
 	
 	Attribute
 	Element
-	TextElement
 	TagElement
+	TextElement
 	CommentElement
 	XMLStructure
 	
@@ -26,7 +26,7 @@ state
 		Element* parent
 
 	TagElement
-		string id
+		unsigned int id
 	    string key
 	    Attribute* attributes[]
 	    Element* childElements[]
@@ -38,7 +38,57 @@ state
 	    string text
 
 	XMLStructure
+		string usedId[]
 	    Attribute* prolog[]
 	    Element root
 
+
 interface
+	
+	Attribute
+		string getName()
+		string getValue()
+		void setValue(string newValue)
+		string toString(unsigned int tabs = 0)
+
+	Element
+		void remove()
+		virtual string toString(unsigned int tabs = 0) = 0
+
+	TagElement
+		void addChildElement(Element &element)
+		void removeChildElement(string id)
+		void addAttribute(Attribute &attribute)
+		void removeAttribute(string name)
+		void setText(string text)
+		void setComment(string text)
+		string toString(unsigned int tabs = 0)
+
+	TextElement
+		void set(string text)
+		string toString(unsigned int tabs = 0)
+
+	CommentElement
+		void set(string text)
+		string toString(unsigned int tabs = 0)
+
+	XMLStructure
+	
+		void addPrologAttribute(Attribute &attribute)
+		void setPrologAttributeValue(string name, string newValue)
+		void removePrologAttributeValue(string name)
+
+		void addAttribute(string id, Attribute &attribute)
+		void setAttributeValue(string id, string name, string newValue)
+		void removeAttributeValue(string id, string name)
+
+		void addElement(string id, Element &element)
+		void removeElement(string id)
+
+		void setText(string id, string text)
+		void removeText(string id)
+
+		void setComment(string id, string text)
+		void removeComment(string id)
+
+		string toString(unsigned int tabs = 0)

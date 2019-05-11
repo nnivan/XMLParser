@@ -143,6 +143,7 @@ int main (){
         <name>Alice</name>
     </person>
     <person gender="male">
+        <-- Just for testing -->
         <name>Bob</name>
     </person>
 <people>
