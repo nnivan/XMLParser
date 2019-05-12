@@ -25,10 +25,10 @@ state
 
 	Element
 		Element* parent
+		string key
 
 	TagElement
-		unsigned int id
-	    string key
+		string id
 	    Attribute* attributes[]
 	    Element* childElements[]
 
@@ -47,22 +47,29 @@ state
 interface
 	
 	Attribute
-		string getName()
-		string getValue()
+    	Attribute(string name, string value)
+		string getName() const
+		string getValue() const
 		void setValue(string newValue)
-		string toString(unsigned int tabs = 0)
+		string toString(unsigned int tabs = 0) const
 
 	Element
-		void remove()
+		Element(Element* parent)
+		const Element* getParent() const
 		virtual string toString(unsigned int tabs = 0) = 0
 
 	TagElement
 		void addChildElement(Element &element)
 		void removeChildElement(string id)
+		unsigned int numberOfChildElements()
+		const Element childElement(unsigned int i)
 		void addAttribute(Attribute &attribute)
 		void removeAttribute(string name)
+		unsigned int numberOfAttribute()
+		const Attribute attribute(unsigned int i)
 		void setText(string text)
 		void setComment(string text)
+		string getKey()
 		string toString(unsigned int tabs = 0)
 
 	TextElement

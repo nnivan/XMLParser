@@ -6,17 +6,23 @@ using namespace std;
 class Attribute{
 
 public:
-	string getName(){
+    Attribute(string name, string value){
+        this->name = name;
+        this->value = value;
+    }
 
+public:
+	string getName() const {
+        return this->name;
 	}
-	string getValue(){
-
+	string getValue() const {
+        return this->value;
 	}
 	void setValue(string newValue){
-
+        this->value = newValue;
 	}
-	string toString(unsigned int tabs = 0){
-
+	string toString(unsigned int tabs = 0) const {
+        return " " + this->name + "=\"" + this->value + "\"";
 	}
 
 private:
@@ -27,52 +33,35 @@ private:
 class Element{
 
 public:
-	void remove(){
-
+    Element(Element* parent){
+        this->parent = parent;
+    }
+public:
+    const Element* getParent() const {
+        return this->parent;
 	}
 	virtual string toString(unsigned int tabs = 0) = 0;
-
+public:
+    string getKey(){
+        return this->key;
+    }
 private:
 	Element* parent;
-};
 
-class TagElement: public Element{
-
-public:
-	void addChildElement(Element &element){
-
-	}
-	void removeChildElement(string id){
-
-	}
-	void addAttribute(Attribute &attribute){
-
-	}
-	void removeAttribute(string name){
-
-	}
-	void setText(string text){
-
-	}
-	void setComment(string text){
-
-	}
-	string toString(unsigned int tabs = 0){
-
-	}
-
-private:
-	unsigned int id;
+protected:
     string key;
-    vector< Attribute* > attributes;
-    vector< Element* > childElements;
 };
 
 class TextElement: public Element{
 
 public:
-	void set(string text){
+    TextElement(string text):Element(this){
+        this->key = "&TextElement";
+        this->text = text;
+    }
 
+	void set(string text){
+        this->text = text;
 	}
 	string toString(unsigned int tabs = 0){
 
@@ -85,8 +74,12 @@ private:
 class CommentElement: public Element{
 
 public:
+    CommentElement(string text):Element(this){
+        this->key = "&CommentElement";
+        this->text = text;
+    }
 	void set(string text){
-
+        this->text = text;
 	}
 	string toString(unsigned int tabs = 0){
 
@@ -95,6 +88,83 @@ public:
 private:
     string text;
 };
+
+class TagElement: public Element{
+
+public:
+    TagElement(string key):Element(this){
+        this->key = key;
+    }
+	void addChildElement(Element &element){
+        this->childElements.push_back( &element);
+	}
+	void removeChildElement(unsigned int i){
+        this->childElements.erase(this->childElements.begin() + i);
+	}
+	void removeChildElement(string key){
+	    for(int i = 0; i < this->childElements.size(); i++){
+            if(this->childElements[i]->getKey() == key){
+                this->childElements.erase(this->childElements.begin() + i);
+                return;
+            }
+	    }
+	}
+    unsigned int numberOfChildElements(){
+        return this->childElements.size();
+    }
+    const Element* childElement(unsigned int i){
+        return this->childElements[i];
+    }
+	void addAttribute(Attribute &attribute){
+        this->attributes.push_back( &attribute);
+	}
+	void removeAttribute(string name){
+	    for(int i = 0; i < this->attributes.size(); i++){
+            if(this->attributes[i]->getName() == name){
+                this->attributes.erase(this->attributes.begin() + i);
+                return;
+            }
+	    }
+	}
+    unsigned int numberOfAttribute(){
+        return this->attributes.size();
+    }
+    const Attribute* attribute(unsigned int i){
+        return this->attributes[i];
+    }
+	void setText(string text){
+	    for(int i = 0; i < this->childElements.size(); i++){
+            if(this->childElements[i]->getKey() == "&TextElement"){
+                this->childElements.erase(this->childElements.begin() + i);
+            }
+	    }
+	    TextElement t(text);
+	    this->addChildElement( t );
+	}
+	void setComment(string text){
+	    for(int i = 0; i < this->childElements.size(); i++){
+            if(this->childElements[i]->getKey() == "&CommentElement"){
+                this->childElements.erase(this->childElements.begin() + i);
+            }
+	    }
+	    CommentElement c(text);
+	    this->addChildElement( c );
+	}
+    string getId(){
+        return this->id;
+    }
+    void setId(string id){
+        this->id = id;
+    }
+	string toString(unsigned int tabs = 0){
+
+	}
+private:
+	string id;
+    vector< Attribute* > attributes;
+    vector< Element* > childElements;
+};
+
 
 class XMLStructure{
 
@@ -170,6 +240,9 @@ private:
 };
 
 int main () {
+
+    Attribute test1("key", "value");
+    cout<< test1.toString() << endl;
 
     return 0;
 }
