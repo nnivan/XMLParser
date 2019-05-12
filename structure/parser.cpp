@@ -11,7 +11,7 @@ struct Attribute{
         this->value = value;
     }
 
-    string toString(){
+    string toString() const {
         return " " + name + "=\"" + value + "\"";
     }
 };
@@ -35,7 +35,7 @@ struct Element{
         this->elements.push_back(&element);
     }
 
-    string toString(int tabs = 0){
+    string toString(int tabs = 0) const {
         string ret;
 
         for(int i = 0; i < tabs; i++) ret += "\t";
@@ -65,7 +65,7 @@ struct Element{
 
 class XMLStructure{
 public:
-    string toString(Element &element, int tabs = 0){
+    string toString(Element &element, int tabs = 0) const {
 
         string ret;
 
@@ -103,7 +103,18 @@ public:
 
         return ret;
     }
+
+    string toString(){
+        return toString( this->root );
+    }
+
+
+    const Element rootElement(){
+        return this->root;
+    }
+
 public:
+
     Element root;
     vector<Attribute> meta;
 };
@@ -133,7 +144,8 @@ int main (){
     xmls.meta.push_back(Attribute("version", "1.0"));
     xmls.meta.push_back(Attribute("encoding", "UTF-8"));
 
-    cout << xmls.toString(xmls.root) << endl;
+
+    cout << xmls.toString() << endl;
     cout << "sizeof(xmls): " << sizeof(xmls) << endl;
     return 0;
 }

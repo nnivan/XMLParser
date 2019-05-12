@@ -10,6 +10,7 @@ classes
 
 relations
 	
+	Attribute
 	TagElement is-a Element has-a Attribute
 	TextElement is-a Element
 	CommentElement is-a Element
@@ -40,7 +41,7 @@ state
 	XMLStructure
 		string usedId[]
 	    Attribute* prolog[]
-	    Element root
+	    TagElement root
 
 
 interface
@@ -82,7 +83,12 @@ interface
 
 		void addAttribute(string id, Attribute &attribute)
 		void setAttributeValue(string id, string name, string newValue)
+		bool hasAttributeValue(string id, string name)
+		string getAttributeValue(string id, string name)
 		void removeAttributeValue(string id, string name)
+
+		const TagElement getElement(string id)
+		const TagElement gerRootElement()
 
 		void addElement(string id, Element &element)
 		void removeElement(string id)
@@ -94,3 +100,4 @@ interface
 		void removeComment(string id)
 
 		string toString(unsigned int tabs = 0)
+
