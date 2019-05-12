@@ -2,251 +2,187 @@
 #include <vector>
 using namespace std;
 
-
-class Attribute{
-
-public:
-    Attribute(string name, string value){
-        this->name = name;
-        this->value = value;
-    }
-
-public:
-	string getName() const {
-        return this->name;
-	}
-	string getValue() const {
-        return this->value;
-	}
-	void setValue(string newValue){
-        this->value = newValue;
-	}
-	string toString(unsigned int tabs = 0) const {
-        return " " + this->name + "=\"" + this->value + "\"";
-	}
-
-private:
+struct Attribute{
 	string name;
 	string value;
+
+	string toString() const {
+		return " " + name + "=\"" + value + "\"";
+	}
 };
 
 class Element{
+public:
 
-public:
-    Element(Element* parent){
-        this->parent = parent;
-    }
-public:
-    const Element* getParent() const {
-        return this->parent;
+	Element(Element* parent, string _key): key( _key ){
+		this->parent = parent;
 	}
-	virtual string toString(unsigned int tabs = 0) = 0;
-public:
-    string getKey(){
-        return this->key;
-    }
+
+	Element* getParent() const {
+		return this->parent;
+	}
+
+	virtual const string toString(unsigned int) const = 0;
+
+	const string key;
+
 private:
+
 	Element* parent;
-
-protected:
-    string key;
-};
-
-class TextElement: public Element{
-
-public:
-    TextElement(string text):Element(this){
-        this->key = "&TextElement";
-        this->text = text;
-    }
-
-	void set(string text){
-        this->text = text;
-	}
-	string toString(unsigned int tabs = 0){
-
-	}
-
-private:
-    string text;
-};
-
-class CommentElement: public Element{
-
-public:
-    CommentElement(string text):Element(this){
-        this->key = "&CommentElement";
-        this->text = text;
-    }
-	void set(string text){
-        this->text = text;
-	}
-	string toString(unsigned int tabs = 0){
-
-	}
-
-private:
-    string text;
 };
 
 class TagElement: public Element{
-
 public:
-    TagElement(string key):Element(this){
-        this->key = key;
-    }
-	void addChildElement(Element &element){
-        this->childElements.push_back( &element);
-	}
-	void removeChildElement(unsigned int i){
-        this->childElements.erase(this->childElements.begin() + i);
-	}
-	void removeChildElement(string key){
-	    for(int i = 0; i < this->childElements.size(); i++){
-            if(this->childElements[i]->getKey() == key){
-                this->childElements.erase(this->childElements.begin() + i);
-                return;
-            }
-	    }
-	}
-    unsigned int numberOfChildElements(){
-        return this->childElements.size();
-    }
-    const Element* childElement(unsigned int i){
-        return this->childElements[i];
-    }
-	void addAttribute(Attribute &attribute){
-        this->attributes.push_back( &attribute);
-	}
-	void removeAttribute(string name){
-	    for(int i = 0; i < this->attributes.size(); i++){
-            if(this->attributes[i]->getName() == name){
-                this->attributes.erase(this->attributes.begin() + i);
-                return;
-            }
-	    }
-	}
-    unsigned int numberOfAttribute(){
-        return this->attributes.size();
-    }
-    const Attribute* attribute(unsigned int i){
-        return this->attributes[i];
-    }
-	void setText(string text){
-	    for(int i = 0; i < this->childElements.size(); i++){
-            if(this->childElements[i]->getKey() == "&TextElement"){
-                this->childElements.erase(this->childElements.begin() + i);
-            }
-	    }
-	    TextElement t(text);
-	    this->addChildElement( t );
-	}
-	void setComment(string text){
-	    for(int i = 0; i < this->childElements.size(); i++){
-            if(this->childElements[i]->getKey() == "&CommentElement"){
-                this->childElements.erase(this->childElements.begin() + i);
-            }
-	    }
-	    CommentElement c(text);
-	    this->addChildElement( c );
-	}
-    string getId(){
-        return this->id;
-    }
-    void setId(string id){
-        this->id = id;
-    }
-	string toString(unsigned int tabs = 0){
 
+	virtual const string toString(unsigned int tabs = 0) const {
+		string ret = "";
+
+		ret += tabsString(tabs);
+
+		ret += "<";
+        ret += this->key;
+
+        ret += " id=\"";
+        ret += this->id;
+        ret += "\"";
+
+        for(int i = 0; i < this->attributes.size(); i++){
+            ret += this->attributes[i]->toString();
+        }
+
+        if(this->childElements.size() == 0){
+            ret += " />\n";
+            return ret;
+        }
+
+        ret += "\n";
+
+        for(int i = 0; i < this->childElements.size(); i++){
+        	this->childElements[i]->toString(tabs+1);
+        }
+
+		ret += tabsString(tabs);
+
+        ret += "</";
+        ret += this->key;
+        ret += ">\n";
+
+        return ret;
 	}
-private:
+
 	string id;
-    vector< Attribute* > attributes;
-    vector< Element* > childElements;
+	vector < Attribute* > attributes;
+	vector < Element* > childElements;
+
+private:
+	string tabsString(unsigned int tabs) const {
+		string ret = "";
+		for(int i = 0; i < tabs; i++){
+			ret += "\t";
+		}
+		return ret;
+	}
 };
 
+class TextElement: public Element{
+public:
+
+	virtual const string toString(unsigned int tabs = 0) const {
+	    string ret = "";
+	    for(int i = 0; i < tabs; i++){
+            ret += "\t";
+	    }
+	    ret += text;
+		return ret;
+	}
+
+	string text;
+};
+
+class CommentElement: public Element{
+public:
+
+	virtual const string toString(unsigned int tabs = 0) const {
+	    string ret = "";
+	    for(int i = 0; i < tabs; i++){
+            ret += "\t";
+	    }
+	    ret += text;
+	    ret += "<--" + text + "-->";
+		return ret;
+	}
+
+	string text;
+};
 
 class XMLStructure{
-
 public:
-	void addPrologAttribute(Attribute &attribute){
 
+	const TagElement getRootElement() const{
+		return this->root;
 	}
-	void setPrologAttributeValue(string name, string newValue){
 
-	}
-	bool hasPrologAttributeValue(string name){
-
-	}
-	string getPrologAttributeValue(string name){
-
-	}
-	void removePrologAttributeValue(string name){
+	void addComment(string id){
 
 	}
 
-	void addAttribute(string id, Attribute &attribute){
-
-	}
-	void setAttributeValue(string id, string name, string newValue){
-
-	}
-	bool hasAttributeValue(string id, string name){
-
-	}
-	string getAttributeValue(string id, string name){
-
-	}
-	void removeAttributeValue(string id, string name){
+	void addText(string id){
 
 	}
 
-	const TagElement getElement(string id){
-
-	}
-	const TagElement gerRootElement(){
+	void removeComment(string id, string text){
 
 	}
 
-	void addElement(string id, Element &element){
-
-	}
-	void removeElement(string id){
+	void removeText(string id, string text){
 
 	}
 
-	void setText(string id, string text){
-
-	}
-	void removeText(string id){
+	void addAttribute(string id, string attributeName, string attributeValue){
 
 	}
 
-	void setComment(string id, string text){
-
-	}
-	void removeComment(string id){
+	void removeAttribute(string id, string attributeName){
 
 	}
 
-	string toString(unsigned int tabs = 0){
-
+	string toString() const{
+		return "not implemented yet";
 	}
+
+
+	vector < Attribute* > prolog;
 
 private:
-	vector< string > usedId;
-    vector< Attribute* > prolog;
-    TagElement root;
+
+	TagElement* findElementRecursive(TagElement* current, string id){
+
+		if(current->id == id) return current;
+
+		for(int i = 0; i < current->childElements.size(); i++){
+			if(current->childElements[i]->key == "&TextElement") continue;
+			if(current->childElements[i]->key == "&CommentElement") continue;
+
+			TagElement* temp = findElementRecursive( (TagElement*) current->childElements[i], id);
+			if(temp){
+				return temp;
+			}
+		}
+		return nullptr;
+	}
+
+	TagElement* findElement(string id){
+		if(this->root.id == id){
+			return &(this->root);
+		}
+		return findElementRecursive(&root, id);
+	}
+
+	vector < string > usedId;
+	TagElement root;
 };
 
 int main () {
 
-    Attribute test1("key", "value");
-    cout<< test1.toString() << endl;
-
     return 0;
 }
-
-
-
-
