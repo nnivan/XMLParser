@@ -64,7 +64,7 @@ public:
 
 
         if(this->childElements.size() == 0){
-            ret += " />\n";
+            ret += " />";
             return ret;
         }
 
@@ -74,8 +74,6 @@ public:
         	ret += this->childElements[i]->toString(tabs+1);
             ret += "\n";
         }
-
-
 		ret += tabsString(tabs);
         ret += "</";
         ret += this->key;
@@ -136,24 +134,41 @@ public:
 
 class XMLStructure{
 public:
+    XMLStructure(string key, string id){
+        this->root = new TagElement(key, id);
+    }
 
-	const TagElement getRootElement() const{
-		return this->root;
+	const TagElement getRootElement() const {
+		return *(this->root);
 	}
 
-	void addComment(string id){
+	void addElement(string id, string newKey, string newId){
+        newId = this->getFreeId(newId);
+        this->usedId.push_back(newId);
+        TagElement newElement(newKey, newId);
+	    TagElement* temp = this->findElement(id);
+        if(temp){
+            temp->childElements.push_back( new TagElement(newKey, newId) );
+        }
+	}
+
+	void removeElement(string id){
 
 	}
 
-	void addText(string id){
+	void addComment(string id, string text){
 
 	}
 
-	void removeComment(string id, string text){
+	void removeComment(string id){
 
 	}
 
-	void removeText(string id, string text){
+	void addText(string id, string text){
+
+	}
+
+	void removeText(string id){
 
 	}
 
@@ -166,7 +181,16 @@ public:
 	}
 
 	string toString() const{
-		return "not implemented yet";
+	    string ret = "";
+        if(prolog.size() != 0){
+            ret += "<?xml";
+            for(int i = 0; i < prolog.size(); i++){
+                ret += prolog[i]->toString();
+            }
+            ret += "xml?>\n";
+        }
+	    ret += this->root->toString();
+		return ret;
 	}
 
 
@@ -191,36 +215,49 @@ private:
 	}
 
 	TagElement* findElement(string id){
-		if(this->root.id == id){
-			return &(this->root);
+		if(this->root->id == id){
+			return this->root;
 		}
-		return findElementRecursive(&root, id);
+		return findElementRecursive(root, id);
+	}
+
+	string getFreeId(string id){
+	    if(isIdFree(id)) return id;
+	    int i = 1;
+	    while(1){
+            if(isIdFree(id + "_" + to_string(i)))
+                return id + "_" + to_string(i);
+            i++;
+	    }
+	}
+
+	bool isIdFree(string id){
+	    for(int i = 0; i < usedId.size(); i++){
+            if(usedId[i] == id){
+                return false;
+            }
+	    }
+	    return true;
 	}
 
 	vector < string > usedId;
-	TagElement root;
+	TagElement* root;
 };
 
 int main () {
-    TagElement root("root", "0");
 
-    TagElement note1("note", "1");
-    TagElement note2("note", "2");
+    TextElement text("just a test");
 
-    TextElement text("First note");
-    CommentElement comment("This is just a comment");
+    XMLStructure structure("letter", "0");
+    structure.addElement("0", "note", "1");
+    structure.addElement("1", "from", "1");
+    structure.addElement("1", "to", "1");
+    structure.addElement("0", "note", "2");
 
-    note1.childElements.push_back( &text );
-    note2.childElements.push_back( &comment );
+    TagElement pesho = structure.getRootElement();
+    pesho.childElements.push_back( &text);
 
-    note1.attributes.push_back( new Attribute("date", "12.05.2019") );
-    note2.attributes.push_back( new Attribute("date", "18.05.2019") );
-
-    root.childElements.push_back( &note1 );
-    root.childElements.push_back( &note2 );
-
-
-    cout<< root.toString() << endl;
+    cout<< pesho.toString() << endl;
 
     // cout << root.toString() << endl;
     return 0;
