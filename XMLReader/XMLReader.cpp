@@ -11,14 +11,128 @@ public:
     static string getValidatedString(string content){
         XMLValidator valid;
         content = valid.removeComments(content);
+        if(content == "error") return "error";
         if(!valid.validateBrackets(content)) return "error";
         content = valid.removeSpaces(content);
+        if(content == "error") return "error";
         if(valid.endOfProlog(content) == -1) return "error";
-
+        content = valid.fixSingleLineTags(content);
+        if(!valid.validateTags(content)) return "error";
+        if(!valid.validateAttributes(content)) return "error";
         return content;
     }
 
 private:
+
+    bool validateAttributes(string content){
+        int j = endOfProlog(content);
+        if(j!=0){
+            int lastAttributeEnd = 5;
+            string currentTag = content.substr(0, j);
+            while(currentTag[lastAttributeEnd] != '?'){
+                string currentAttribute = getNextAttribute(lastAttributeEnd + 1, currentTag, true);
+                if(currentAttribute == "error") return false;
+                lastAttributeEnd += currentAttribute.size() + 1;
+            }
+        }
+        for(int i = j; i < content.size(); i++){
+            if(content[i] == '<'){
+                string currentTag = getTagContent(i, content);
+                string currentTagName = getTagName(i, content);
+                int lastAttributeEnd = currentTagName.size() + 1;
+                while(currentTag[lastAttributeEnd] != '>'){
+                    string currentAttribute = getNextAttribute(lastAttributeEnd + 1, currentTag);
+                    if(currentAttribute == "error") return false;
+                    lastAttributeEnd += currentAttribute.size() + 1;
+                }
+            }
+        }
+        return true;
+    }
+
+    string getNextAttribute(int j, string content, bool isProlog = false){
+        string ret = "";
+        for(int i = j; i < content.size(); i++){
+            ret+=content[i];
+            if(content[i] == ' '){
+                return "error";
+            }
+            if(content[i] == '='){
+                j = i + 1;
+                break;
+            }
+        }
+        if(content[j]!='"') return "error";
+        ret += content[j];
+        for(int i = j + 1; i < content.size(); i++){
+            ret += content[i];
+            if(content[i] == '"'){
+                if(isProlog){
+                    if(content[i+1] != ' ' && content[i+1] != '?') return "error";
+                }else{
+                    if(content[i+1] != ' ' && content[i+1] != '>') return "error";
+                }
+                return ret;
+            }
+        }
+        return "error";
+    }
+
+    string fixSingleLineTags(string content){
+        int j = endOfProlog(content);
+        string ret = content.substr(0, j);
+        for(int i = j; i < content.size(); i++){
+            if(content[i] == '<'){
+                string current = getTagContent(i, content);
+                if(current[current.size()-2] == '/'){
+                    current.erase(current.size()-2, 1);
+                    ret+=current;
+                    ret+="</" + getTagName(0, current) + ">";
+                }else{
+                    ret+=current;
+                }
+            }
+        }
+        return ret;
+    }
+
+    bool validateTags(string content){
+        int j = endOfProlog(content);
+        stack<string> tags;
+        for(int i = j; i < content.size(); i++){
+            if(content[i] == '<'){
+                string currentTagName = getTagName(i, content);
+                if(currentTagName[0] == '/'){
+                    if(tags.empty()) return false;
+                    if(tags.top() != currentTagName.substr(1, currentTagName.size()- 1)){
+                        return false;
+                    }
+                    tags.pop();
+                }else{
+                    tags.push(currentTagName);
+                }
+            }
+        }
+        return tags.empty();
+    }
+
+    string getTagName(int j, string content){
+        for(int i = j + 1; i < content.size(); i++){
+            if(isWhiteSpace(content[i]))
+                return content.substr(j + 1, i - j - 1);
+            if(content[i] == '>')
+                return content.substr(j + 1, i - j - 1);
+        }
+        return content.substr(j + 1, content.size() - j - 1);
+    }
+
+    string getTagContent(int j, string content){
+        for(int i = j + 1; i < content.size(); i++){
+            if(content[i] == '<')
+                return content.substr(j, i - j);
+        }
+        return content.substr(j, content.size() - j);
+    }
 
     int endOfProlog(string content){
         if(content[1] != '?'){
@@ -37,15 +151,6 @@ private:
                 if(content[i] == '\"') inString = !inString;
                 if(content[i] == '>') return -1;
                 if(content[i] == '?' && content[i + 1] == '>' && !inString) return i + 2;
-            }
-        }
-    }
-
-    bool valideteTags(string content){
-        int j = 0;
-        if(content[1] == '?'){
-            for(j = 0; j < content.size(); j++){
-
             }
         }
     }
@@ -105,6 +210,11 @@ private:
                         i = j - 1;
                         continue;
                     }
+                    if(content[j] == '/'){
+                        ret += content[i];
+                        i = j - 1;
+                        continue;
+                    }
                     if(content[i] == ' ' and isWhiteSpace(content[i+1])) continue;
                     if(content[i] == ' ' and content[i+1] == '=') continue;
                     if(content[i] == '='){
@@ -151,7 +261,6 @@ private:
     }
 
     string removeComments(string content){
-        if(validateBrackets(content)) return "";
         int startIndex, endIndex;
         while(1){
             startIndex = content.find("<!--");
@@ -161,12 +270,12 @@ private:
                     return content;
                 }else{
                     // XMLValidator::ERROR += "has -->, but not <!--\n";
-                    return ">>>";
+                    return "error";
                 }
             }
             if(endIndex == string::npos){
                 // XMLValidator::ERROR += "has <!--, but not -->\n";
-                return ">>>";
+                return "error";
             }
             content.erase(startIndex, endIndex - startIndex + 3);
         }
