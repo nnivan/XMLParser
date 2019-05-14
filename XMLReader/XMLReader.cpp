@@ -17,6 +17,7 @@ public:
         if(content == "error") return "error";
         if(valid.endOfProlog(content) == -1) return "error";
         content = valid.fixSingleLineTags(content);
+        if(content == "error") return "error";
         if(!valid.validateTags(content)) return "error";
         if(!valid.validateAttributes(content)) return "error";
         return content;
@@ -81,6 +82,7 @@ private:
     string fixSingleLineTags(string content){
         int j = endOfProlog(content);
         string ret = content.substr(0, j);
+        if(content[j] != '<') return "error";
         for(int i = j; i < content.size(); i++){
             if(content[i] == '<'){
                 string current = getTagContent(i, content);
@@ -111,6 +113,9 @@ private:
                 }else{
                     tags.push(currentTagName);
                 }
+                i += currentTagName.size() + 1;
+            }else{
+                if(tags.empty()) return false;
             }
         }
         return tags.empty();
@@ -135,6 +140,7 @@ private:
     }
 
     int endOfProlog(string content){
+        if(content[0] != '<') return -1;
         if(content[1] != '?'){
             return 0;
         }else{
