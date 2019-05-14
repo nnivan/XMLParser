@@ -56,19 +56,13 @@ struct Element{
 
 
         if(this->childElements.empty()){
-            if(this->text == ""){
-                /// ( />)
-                ret += " />";
-                return ret;
-            }else{
-                /// (>TEXT</KEY>)
-                ret += ">";
-                ret += this->text;
-                ret += "</";
-                ret += this->key;
-                ret += ">";
-                return ret;
-            }
+            /// (>TEXT</KEY>)
+            ret += ">";
+            ret += this->text;
+            ret += "</";
+            ret += this->key;
+            ret += ">";
+            return ret;
         }
 
         /// (>TEXT\n)
@@ -270,7 +264,7 @@ int main () {
     string id;
     id = xmls.addElement(xmls.getRootId(), "book", "", "1");
     xmls.addAttribute(id, "category", "children");
-    xmls.addElement(id, "title", "Harry Potter");
+    xmls.addElement(id, "title", "");
     xmls.addElement(id, "author", "J K. Rowling");
     xmls.addElement(id, "year", "2005");
     xmls.addElement(id, "price", "29.99");
