@@ -10,14 +10,45 @@ public:
 
     static string getValidatedString(string content){
         XMLValidator valid;
-        cout << valid.removeSpaces(content);
         content = valid.removeComments(content);
         if(!valid.validateBrackets(content)) return "error";
         content = valid.removeSpaces(content);
+        if(valid.endOfProlog(content) == -1) return "error";
+
         return content;
     }
 
 private:
+
+    int endOfProlog(string content){
+        if(content[1] != '?'){
+            return 0;
+        }else{
+            if( content[0] != '<' ||
+                content[1] != '?' ||
+                content[2] != 'x' ||
+                content[3] != 'm' ||
+                content[4] != 'l' ||
+                content[5] != ' '){
+                return -1;
+            }
+            bool inString = false;
+            for(int i = 0; i < content.size(); i++){
+                if(content[i] == '\"') inString = !inString;
+                if(content[i] == '>') return -1;
+                if(content[i] == '?' && content[i + 1] == '>' && !inString) return i + 2;
+            }
+        }
+    }
+
+    bool valideteTags(string content){
+        int j = 0;
+        if(content[1] == '?'){
+            for(j = 0; j < content.size(); j++){
+
+            }
+        }
+    }
 
     bool isWhiteSpace(char x){
         return x==' ' or x=='\t' or x=='\n';
@@ -26,6 +57,13 @@ private:
     int nextCharecter(int i, string content){
         for(i = i + 1;i < content.size(); i++){
             if(!isWhiteSpace(content[i])){
+                return i;
+            }
+        }
+    }
+    int nextWhiteSpace(int i, string content){
+        for(i = i + 1;i < content.size(); i++){
+            if(isWhiteSpace(content[i])){
                 return i;
             }
         }
