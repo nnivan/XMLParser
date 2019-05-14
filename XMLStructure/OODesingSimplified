@@ -1,0 +1,57 @@
+classes
+	Attribute
+	Element
+	XMLStructure
+
+relations
+	Element has-a Attribute
+	XMLStructure has-a Attribute
+	XMLStructure has-a Element
+
+state
+	Attribute
+		string name
+		string value
+	Element
+		string id
+		string key
+		string text
+		vector<Attribute> attributes
+		vector<Element> childElements
+	XMLStructure
+		vector<Attribute> prolog
+		vector<string> usedId
+		Element root
+
+
+interface
+	Attribute
+		Attribute(string name, string value)
+		string name
+		string value
+		string toString() const
+	Element
+		Element(string key = "", string text = "", string id = "")
+		void addChildElement(Element newElement)
+		void childElementRemove(int i)
+		void addAttribute(Attribute newAttribute)
+		void removeAttribute(int i)
+		string toString(int tabs = 0) const
+		string id
+		string key
+		string text
+		vector<Attribute> attributes
+		vector<Element> childElements
+	XMLStructure
+		XMLStructure(string key = "root", string id = "0")
+		string addElement(string id, string newKey, string newText = "", string newId = "0")
+		void removeElement(string id)
+		void setText(string id, string text)
+		void addAttribute(string id, string name, string value)
+		void removeAttribute(string id, string attributeName)
+		void addPrologAttribute(string name, string value)
+		void removePrologAttribute(string name)
+		string getRootId() const
+		const Element getRootElement() const
+		string toString() const
+		vector<Attribute> prolog

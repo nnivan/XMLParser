@@ -71,14 +71,10 @@ struct Element{
             }
         }
 
-        /// (>\n)
-        ret += ">\n";
-        if(this->text != ""){
-            /// (\tTEXT\n)
-            ret += this->tabsString(tabs + 1);
-            ret += this->text;
-            ret += "\n";
-        }
+        /// (>TEXT\n)
+        ret += ">";
+        ret += this->text;
+        ret += "\n";
 
         /// n:(CHILDELEMENT\n)
         for(int i = 0; i < this->childElements.size(); i++){
@@ -114,7 +110,7 @@ private:
 
 class XMLStructure{
 public:
-    XMLStructure(string key, string id = "0"){
+    XMLStructure(string key = "root", string id = "0"){
         this->root = Element(key, "", id);
         this->usedId.push_back("");
         this->usedId.push_back("0");
@@ -260,7 +256,7 @@ private:
 	    return true;
 	}
 
-	vector < string > usedId;
+	vector<string> usedId;
     Element root;
 
 };
@@ -272,13 +268,13 @@ int main () {
     xmls.addPrologAttribute("encoding", "UTF-8");
 
     string id;
-    id = xmls.addElement(xmls.getRootId(), "book");
+    id = xmls.addElement(xmls.getRootId(), "book", "", "1");
     xmls.addAttribute(id, "category", "children");
     xmls.addElement(id, "title", "Harry Potter");
     xmls.addElement(id, "author", "J K. Rowling");
     xmls.addElement(id, "year", "2005");
     xmls.addElement(id, "price", "29.99");
-    id = xmls.addElement(xmls.getRootId(), "book");
+    id = xmls.addElement(xmls.getRootId(), "book", "", "2");
     xmls.addAttribute(id, "category", "web");
     xmls.addElement(id, "title", "Learning XML");
     xmls.addElement(id, "author", "Erik T. Ray");
@@ -292,13 +288,13 @@ int main () {
 /**
 <?xml version="1.0" encoding="UTF-8"?>
 <bookstore>
-    <book category="children">
+    <book id="1" category="children">
         <title>Harry Potter</title>
         <author>J K. Rowling</author>
         <year>2005</year>
         <price>29.99</price>
     </book>
-    <book category="web">
+    <book id="1" category="web">
         <title>Learning XML</title>
         <author>Erik T. Ray</author>
         <year>2003</year>
