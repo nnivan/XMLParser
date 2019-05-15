@@ -1,0 +1,71 @@
+classes
+	Attribute
+	Element
+	XMLStructure
+
+relations
+	Element has-a Attribute
+	XMLStructure has-a Attribute
+	XMLStructure has-a Element
+
+state
+	Attribute
+		string name
+		string value
+	Element
+		string id
+		string key
+		string text
+		vector<Attribute> attributes
+		vector<Element> childElements
+	XMLStructure
+		vector<Attribute> prolog
+		vector<string> usedId
+		Element root
+
+
+interface
+
+	Attribute
+	    Attribute(string name, string value)
+	    set(string name, string value)
+	    void setName(string name)
+	    void setValue(string value)
+	    string getName() const
+	    string getValue() const
+		string toString() const
+
+	Element
+	    Element(string key = "", string text = "", string id = "")
+	    void set(string key, string text)
+	    void set(string key, string text, string id)
+	    void setKey(string key)
+	    void setText(string text)
+	    void setId(string id)
+	    string getKey() const 
+	    string getText() const 
+	    string getId() const
+	    void addChildElement(string key, string text = "", string id = "")
+	    int sizeChildElement() const
+	    Element* getChildElement(int i)
+	    void removeChildElement(int i) 
+	    void addAttribute(string name, string value = "")
+	    int sizeAttribute() const 
+	    Attribute* getAttribute(int i) 
+	    void removeAttribute(int i) 
+		string toString(int tabs = 0) const
+
+	XMLStructure
+	    XMLStructure(string key = "root", string id = "0")
+		string addElement(string id, string newKey, string newText = "", string newId = "0")
+		bool removeElement(string id)
+		void setText(string id, string text)
+		void addAttribute(string id, string name, string value)
+		bool removeAttribute(string id, string attributeName)
+		void addPrologAttribute(string name, string value)
+	    int sizePrologAttribute() const
+	    Attribute* getPrologAttribute(int i)
+		void removePrologAttribute(string name)
+		string getRootId() const
+		const Element getRootElement() const
+		string toString() const

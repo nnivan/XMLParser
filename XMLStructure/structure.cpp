@@ -3,36 +3,111 @@
 using namespace std;
 
 struct Attribute{
-
+public:
     Attribute(string name, string value){
+        this->doSetName(name);
+        this->doSetValue(value);
+    }
+
+    set(string name, string value){
+        this->doSetName(name);
+        this->doSetValue(value);
+    }
+
+    void setName(string name){
+        this->doSetName(name);
+    }
+    void setValue(string value){
+        this->doSetValue(value);
+    }
+
+    string getName() const {
+        return this->name;
+    }
+    string getValue() const {
+        return this->value;
+    }
+
+	string toString() const {
+        return " " + name + "=\"" + value + "\"";
+	}
+
+private:
+
+    void doSetName(string name){
         this->name = name;
+    }
+
+    void doSetValue(string value){
         this->value = value;
     }
 
 	string name;
 	string value;
-	string toString() const {
-        return " " + name + "=\"" + value + "\"";
-	}
 };
 
 struct Element{
 
     Element(string key = "", string text = "", string id = ""){
-        this->key = key;
-        this->text = text;
-        this->id = id;
+        doSetKey(key);
+        doSetText(text);
+        doSetId(id);
     }
 
-    void addChildElement(Element newElement){
-        this->childElements.push_back(newElement);
+
+    void set(string key, string text){
+        doSetKey(key);
+        doSetText(text);
     }
-    void childElementRemove(int i) {
+
+    void set(string key, string text, string id){
+        doSetKey(key);
+        doSetText(text);
+        doSetId(id);
+    }
+
+    void setKey(string key){
+        doSetKey(key);
+    }
+    void setText(string text){
+        doSetText(text);
+    }
+    void setId(string id){
+        doSetId(id);
+    }
+
+    string getKey() const {
+        return this->key;
+    }
+    string getText() const {
+        return this->text;
+    }
+    string getId() const {
+        return this->id;
+    }
+
+    void addChildElement(string key, string text = "", string id = ""){
+        this->childElements.push_back( Element(key, text, id) );
+    }
+    int sizeChildElement() const {
+        return this->childElements.size();
+    }
+    Element* getChildElement(int i) {
+        return &(this->childElements[i]);
+    }
+    void removeChildElement(int i) {
         this->childElements.erase(this->childElements.begin() + i);
     }
 
-    void addAttribute(Attribute newAttribute){
-        this->attributes.push_back(newAttribute);
+    void addAttribute(string name, string value = ""){
+        if(name == "id") return;
+        this->attributes.push_back( Attribute(name, value) );
+    }
+    int sizeAttribute() const {
+        return this->attributes.size();
+    }
+    Attribute* getAttribute(int i) {
+        return &(this->attributes[i]);
     }
     void removeAttribute(int i) {
         this->attributes.erase(this->attributes.begin() + i);
@@ -53,7 +128,6 @@ struct Element{
         for(int i = 0; i < this->attributes.size(); i++){
             ret += this->attributes[i].toString();
         }
-
 
         if(this->childElements.empty()){
             /// (>TEXT</KEY>)
@@ -85,13 +159,20 @@ struct Element{
         return ret;
 	}
 
-	string id;
-	string key;
-	string text;
-	vector<Attribute> attributes;
-	vector<Element> childElements;
 
 private:
+
+    void doSetKey(string key){
+        if(key == "") key = "unknown";
+        this->key = key;
+    }
+    void doSetText(string text){
+        this->text = text;
+    }
+    void doSetId(string id){
+        this->id = id;
+    }
+
 	string tabsString(int tabs) const {
 		string ret = "";
 		for(int i = 0; i < tabs; i++){
@@ -100,6 +181,11 @@ private:
 		return ret;
 	}
 
+	string id;
+	string key;
+	string text;
+	vector<Attribute> attributes;
+	vector<Element> childElements;
 };
 
 class XMLStructure{
@@ -115,56 +201,78 @@ public:
         if(temp){
             newId = this->getFreeId(newId);
             this->usedId.push_back(newId);
-            Element newElement(newKey, newId);
-            temp->childElements.push_back( Element(newKey, newText, newId) );
+            temp->addChildElement( newKey, newText, newId );
             return newId;
         }
         return "";
 	}
-	void removeElement(string id){
+	bool removeElement(string id){
         Element* temp = findElementParent(id);
         if(temp){
-            for(int i = 0; i < temp->childElements.size(); i++){
-                if(temp->childElements[i].id == id){
-                    temp->childElementRemove(i);
-                    return;
+            for(int i = 0; i < temp->sizeChildElement(); i++){
+                if(temp->getChildElement(i)->getId() == id){
+                    temp->removeChildElement(i);
+                    return true;
                 }
             }
         }
+        return false;
 	}
 
 	void setText(string id, string text){
         Element* temp = findElement(id);
         if(temp){
-            temp->text = text;
+            temp->setText(text);
         }
+	}
+	string getText(string id){
+        Element* temp = findElement(id);
+        return temp->getText();
 	}
 
 	void addAttribute(string id, string name, string value){
 	    Element* temp = this->findElement(id);
         if(temp){
-            temp->addAttribute( Attribute(name, value) );
+            temp->addAttribute( name, value );
         }
 	}
-	void removeAttribute(string id, string attributeName){
+	void setAttributeValue(string id, string name, string value){
 	    Element* temp = this->findElement(id);
         if(temp){
-            for(int i = 0; i < temp->attributes.size(); i++){
-                if(temp->attributes[i].name == attributeName){
-                    temp->removeAttribute(i);
-                    i--;
+            for(int i = 0; i < temp->sizeAttribute(); i++){
+                if(temp->getAttribute(i)->getName() == name){
+                    temp->getAttribute(i)->setValue(value);
                 }
             }
         }
+	}
+	bool removeAttribute(string id, string attributeName){
+	    Element* temp = this->findElement(id);
+        if(temp){
+            for(int i = 0; i < temp->sizeAttribute(); i++){
+                if(temp->getAttribute(i)->getName() == attributeName){
+                    temp->removeAttribute(i);
+                    return true;
+                }
+            }
+        }
+        return false;
 	}
 
 	void addPrologAttribute(string name, string value){
         this->prolog.push_back( Attribute(name, value) );
 	}
 
+    int sizePrologAttribute() const {
+        this->prolog.size();
+    }
+    Attribute* getPrologAttribute(int i) {
+        return &(this->prolog[i]);
+    }
+
 	void removePrologAttribute(string name){
         for(int i = 0; i < this->prolog.size(); i++){
-            if(this->prolog[i].name == name){
+            if(this->prolog[i].getName() == name){
                 this->prolog.erase(this->prolog.begin() + i);
                 return;
             }
@@ -172,7 +280,7 @@ public:
 	}
 
 	string getRootId() const {
-        return this->root.id;
+        return this->root.getId();
 	}
 
 	const Element getRootElement() const {
@@ -191,17 +299,15 @@ public:
         return ret;
 	}
 
-	vector<Attribute> prolog;
-
 private:
 
     Element* findElementRecursive(Element* current, string id){
 
-		if(current->id == id) return current;
+		if(current->getId() == id) return current;
 
-		for(int i = 0; i < current->childElements.size(); i++){
+		for(int i = 0; i < current->sizeChildElement(); i++){
 
-			Element* temp = findElementRecursive( &current->childElements[i], id);
+			Element* temp = findElementRecursive( current->getChildElement(i), id);
 			if(temp){
 				return temp;
 			}
@@ -215,11 +321,11 @@ private:
 
 	Element* findElementParentRecursive(Element* current, string id){
 
-		for(int i = 0; i < current->childElements.size(); i++){
-            if(current->childElements[i].id == id){
+		for(int i = 0; i < current->sizeChildElement(); i++){
+            if(current->getChildElement(i)->getId() == id){
                 return current;
             }
-			Element* temp = findElementRecursive( &current->childElements[i], id);
+			Element* temp = findElementRecursive( current->getChildElement(i), id);
 			if(temp){
 				return temp;
 			}
@@ -250,6 +356,7 @@ private:
 	    return true;
 	}
 
+	vector<Attribute> prolog;
 	vector<string> usedId;
     Element root;
 
@@ -263,7 +370,7 @@ int main () {
 
     string id;
     id = xmls.addElement(xmls.getRootId(), "book", "", "1");
-    xmls.addAttribute(id, "category", "children");
+    xmls.addAttribute(id, "category", "kids");
     xmls.addElement(id, "title", "");
     xmls.addElement(id, "author", "J K. Rowling");
     xmls.addElement(id, "year", "2005");
@@ -274,6 +381,8 @@ int main () {
     xmls.addElement(id, "author", "Erik T. Ray");
     xmls.addElement(id, "year", "2003");
     xmls.addElement(id, "price", "39.95");
+
+    xmls.setAttributeValue("1", "category", "children");
 
     cout << xmls.toString() << endl;
 
