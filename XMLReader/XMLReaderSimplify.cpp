@@ -49,7 +49,6 @@ public:
                 v.skipWhiteSpace(n, content);
                 if(content[n] != '>') return "ERROR11";
                 n = n + 1;
-                v.skipWhiteSpace(n, content);
 
                 if(tags.empty()) return "ERROR100";
                 if(tags.top() != elementKey) return "ERROR101";
@@ -73,8 +72,19 @@ public:
                 }
                 cout << "element id:" << elementId <<endl;
                 n = n + 1;
-                j = n;
-                v.skipWhiteSpace(j, content);
+
+                tags.push(elementKey);
+                id.push(elementId);
+            }
+
+            j = n;
+            v.skipWhiteSpace(j, content);
+
+            if(tags.empty()){
+                if(j < content.size()){
+                    return "ERROR16";
+                }
+            }else{
                 if(content[j] != '<'){
                     j = n;
                     if(!v.getText(j, content, elementText)) return "ERROR15";
@@ -82,12 +92,8 @@ public:
                 }else{
                     cout << "no element text" << endl;
                 }
-                n = j;
-
-                tags.push(elementKey);
-                id.push(elementId);
             }
-            n = n + 1;
+            n = j + 1;
         }
         return "EOF\n";
     }
