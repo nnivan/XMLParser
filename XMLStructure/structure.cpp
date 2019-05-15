@@ -196,9 +196,10 @@ public:
         this->usedId.push_back("0");
     }
 
-	string addElement(string id, string newKey, string newText = "", string newId = "0"){
+	string addElement(string id, string newKey, string newText = "", string newId = ""){
 	    Element* temp = this->findElement(id);
         if(temp){
+            if(newId == "") newId = id;
             newId = this->getFreeId(newId);
             this->usedId.push_back(newId);
             temp->addChildElement( newKey, newText, newId );

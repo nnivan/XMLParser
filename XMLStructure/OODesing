@@ -60,7 +60,9 @@ interface
 		string addElement(string id, string newKey, string newText = "", string newId = "0")
 		bool removeElement(string id)
 		void setText(string id, string text)
+		string getText(string id)
 		void addAttribute(string id, string name, string value)
+		void setAttributeValue(string id, string name, string value)
 		bool removeAttribute(string id, string attributeName)
 		void addPrologAttribute(string name, string value)
 	    int sizePrologAttribute() const
