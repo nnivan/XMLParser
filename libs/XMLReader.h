@@ -3,10 +3,9 @@
 
 class XMLReader{
 public:
-    string getXMLfromFile(string path);
-private:
     string readFile(string path);
     void writeFile(string path, string data);
+private:
     ifstream input;
     ofstream output;
 };

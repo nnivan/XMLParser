@@ -1,5 +1,7 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
+#include <stack>
 using namespace std;
 
 #include "XMLAttribute.h"
@@ -108,13 +110,13 @@ string XMLElement::toString(int tabs) const {
     /// (>TEXT\n)
     ret += ">";
     ret += this->text;
-    ret += "\n";
 
     /// n:(CHILDELEMENT\n)
     for(int i = 0; i < this->childElements.size(); i++){
-    	ret += this->childElements[i].toString(tabs+1);
         ret += "\n";
+    	ret += this->childElements[i].toString(tabs+1);
     }
+    ret += "\n";
 
     /// (\t</KEY>)
 	ret += this->tabsString(tabs);

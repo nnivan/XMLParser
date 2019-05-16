@@ -3,7 +3,7 @@
 
 class XMLValidator{
 public:
-    static string validate(string content);
+    static XMLStructure getValidXMLStructureFromString(string content, string &error);
 private:
     bool getText(int &i, string &content, string &text);
     bool getStartOfTag(int &i, string &content);

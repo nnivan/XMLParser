@@ -8,13 +8,17 @@ using namespace std;
 #include "libs\XMLElement.h"
 #include "libs\XMLStructure.h"
 #include "libs\XMLValidator.h"
-#include "libs\XMLReader.h" 
+#include "libs\XMLReader.h"
 
 int main(){
-
+    // getValidXMLStructureFromString
+    XMLStructure xmls;
+    string path, fileContent, errormsg;
     XMLReader reader;
-    string file = reader.getXMLfromFile("worstCase.xml");
-    cout << file << endl;
+    fileContent = reader.readFile("worstCase.xml");
+    xmls = XMLValidator::getValidXMLStructureFromString(fileContent, errormsg);
+    cout << xmls.toString() << endl;
+    cout << errormsg << endl;
 
     /*XMLStructure xmls("bookstore");
     xmls.addPrologAttribute("version", "1.0");

@@ -1,15 +1,11 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <stack>
 using namespace std;
 
-#include "XMLValidator.h"
 #include "XMLReader.h"
 
-string XMLReader::getXMLfromFile(string path){
-    string content = readFile(path);
-    content = XMLValidator::validate(content);
-    return content;
-}
 
 string XMLReader::readFile(string path){
     input.open(path.c_str());

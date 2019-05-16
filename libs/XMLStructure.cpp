@@ -1,5 +1,7 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
+#include <stack>
 using namespace std;
 
 #include "XMLAttribute.h"
@@ -12,10 +14,15 @@ XMLStructure::XMLStructure(string key, string id){
     this->usedId.push_back("0");
 }
 
+void XMLStructure::setRootValues(string key, string id){
+    this->root.setKey(key);
+    this->root.setId(this->getFreeId(id));
+    this->usedId.push_back(this->root.getId());
+}
+
 string XMLStructure::addElement(string id, string newKey, string newText, string newId){
     XMLElement* temp = this->findElement(id);
     if(temp){
-        if(newId == "") newId = id;
         newId = this->getFreeId(newId);
         this->usedId.push_back(newId);
         temp->addChildElement( newKey, newText, newId );
@@ -23,6 +30,7 @@ string XMLStructure::addElement(string id, string newKey, string newText, string
     }
     return "";
 }
+
 bool XMLStructure::removeElement(string id){
     XMLElement* temp = findElementParent(id);
     if(temp){
@@ -46,7 +54,11 @@ void XMLStructure::setText(string id, string text){
 void XMLStructure::appendText(string id, string text){
     XMLElement* temp = findElement(id);
     if(temp){
-        temp->setText(temp->getText() + text);
+        if(temp->getText() != ""){
+            temp->setText(temp->getText() + " " + text);
+        }else{
+            temp->setText(temp->getText() + text);
+        }
     }
 }
 

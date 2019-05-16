@@ -1,75 +1,147 @@
 #include <iostream>
+#include <fstream>
+#include <vector>
 #include <stack>
 using namespace std;
 
+#include "XMLAttribute.h"
+#include "XMLElement.h"
+#include "XMLStructure.h"
 #include "XMLValidator.h"
 
-string XMLValidator::validate(string content){
+XMLStructure XMLValidator::getValidXMLStructureFromString(string content, string &error){
+
+    XMLStructure xmls;
+
     content.append("        ");
     XMLValidator v;
     int n = 0, j = 0;
     v.skipWhiteSpace(n, content);
-    if(content[n] != '<') return "ERROR1";
+    if(content[n] != '<') {
+        error = "ERROR1";
+        return xmls;
+    }
     if(content[n+1] == '?'){
-        cout<<"Prolog:"<<endl;
-        if(content[n+2] != 'x') return "ERROR2";
-        if(content[n+3] != 'm') return "ERROR3";
-        if(content[n+4] != 'l') return "ERROR4";
+        /// cout<<"Prolog:"<<endl;
+        if(content[n+2] != 'x') {
+            error = "ERROR2";
+            return xmls;
+        }
+        if(content[n+3] != 'm') {
+            error = "ERROR3";
+            return xmls;
+        }
+        if(content[n+4] != 'l') {
+            error = "ERROR4";
+            return xmls;
+        }
         n = n + 5;
         j = n;
-        if(!v.getEndOfProlog(j, content)) return "ERROR5";
-        if(content[j] != '?') return "ERROR6";
+        if(!v.getEndOfProlog(j, content)) {
+            error = "ERROR5";
+            return xmls;
+        }
+        if(content[j] != '?') {
+            error = "ERROR6";
+            return xmls;
+        }
         while(n < j){
             string attributeName, attributeValue;
-            if(!v.getAttribute(n, content, attributeName, attributeValue)) return "ERROR7";
-            cout << "\t(name:" << attributeName << ", ";
-            cout << "value:" << attributeValue << ")" << endl;
+            if(!v.getAttribute(n, content, attributeName, attributeValue)) {
+                error = "ERROR7";
+                return xmls;
+            }
+            /// cout << "\t(name:" << attributeName << ", ";
+            /// cout << "value:" << attributeValue << ")" << endl;
+            xmls.addPrologAttribute(attributeName, attributeValue);
             v.skipWhiteSpace(n, content);
         }
         n = n + 2;
     }
     v.skipWhiteSpace(n, content);
-    if(content[n++] != '<') return "ERROR8";
+    if(content[n++] != '<') {
+        error = "ERROR8";
+        return xmls;
+    }
 
-    if(content[n] == '/') return "ERROR9";
+    if(content[n] == '/') {
+        error = "ERROR9";
+        return xmls;
+    }
 
     stack<string> tags;
     stack<string> id;
 
     while( n < content.size() ){
-        string elementKey;
-        string elementId;
-        string elementText;
+        string elementKey = "";
+        string elementId = "";
+        string elementText = "";
         if(content[n] == '/'){
             n = n + 1;
-            if(!v.getTagName(n, content, elementKey)) return "ERROR10";
-            cout<<"-close element:"<<elementKey<<"-"<<endl;
+            if(!v.getTagName(n, content, elementKey)) {
+                error = "ERROR10";
+                return xmls;
+            }
+            /// cout<<"-close element:"<<elementKey<<"-"<<endl;
             v.skipWhiteSpace(n, content);
-            if(content[n] != '>') return "ERROR11";
+            if(content[n] != '>') {
+                error = "ERROR11";
+                return xmls;
+            }
             n = n + 1;
 
-            if(tags.empty()) return "ERROR100";
-            if(tags.top() != elementKey) return "ERROR101";
+            if(tags.empty()) {
+                error = "ERROR101";
+                return xmls;
+            }
+            if(tags.top() != elementKey) {
+                error = "ERROR102";
+                return xmls;
+            }
             tags.pop();
             id.pop();
         }else{
-            if(!v.getTagName(n, content, elementKey)) return "ERROR12";
-            cout<<"-open element:"<<elementKey<<"-"<<endl;
+            if(!v.getTagName(n, content, elementKey)) {
+                error = "ERROR12";
+                return xmls;
+            }
+            /// cout<<"-open element:"<<elementKey<<"-"<<endl;
             v.skipWhiteSpace(n, content);
             j = n;
-            if(!v.getEndOfTag(j, content)) return "ERROR13";
+            if(!v.getEndOfTag(j, content)) {
+                error = "ERROR13";
+                return xmls;
+            }
+            vector< Attribute > attributes;
             while(n < j){
                 string attributeName, attributeValue;
-                if(!v.getAttribute(n, content, attributeName, attributeValue)) return "ERROR14";
-                cout << "\tAttribute(name:" << attributeName << ", ";
-                cout << "value:" << attributeValue << ")"<<endl;
+                if(!v.getAttribute(n, content, attributeName, attributeValue)) {
+                    error = "ERROR14";
+                    return xmls;
+                }
+                /// cout << "\tAttribute(name:" << attributeName << ", ";
+                /// cout << "value:" << attributeValue << ")"<<endl;
                 if(attributeName == "id"){
                     elementId = attributeValue;
+                }else{
+                    attributes.push_back( Attribute(attributeName, attributeValue) );
                 }
                 v.skipWhiteSpace(n, content);
             }
-            cout << "element id:" << elementId <<endl;
+            /// cout << "element id:" << elementId <<endl;
             n = n + 1;
+
+            if(tags.empty()){
+                xmls.setRootValues(elementKey, elementId);
+                elementId = xmls.getRootId();
+                /// cout << "this is root element -" << elementId << "-" << endl;
+            }else{
+                elementId = xmls.addElement(id.top(), elementKey, elementText, elementId);
+            }
+
+            for(int i = 0; i < attributes.size(); i++){
+                xmls.addAttribute(elementId, attributes[i].getName(), attributes[i].getValue());
+            }
 
             tags.push(elementKey);
             id.push(elementId);
@@ -80,26 +152,39 @@ string XMLValidator::validate(string content){
 
         if(tags.empty()){
             if(j < content.size()){
-                return "ERROR16";
+                error = "ERROR16";
+                return xmls;
             }
         }else{
             if(content[j] != '<'){
                 j = n;
-                if(!v.getText(j, content, elementText)) return "ERROR15";
-                cout << "element text: -" << elementText << "-" << endl;
+                if(!v.getText(j, content, elementText)) {
+                    error = "ERROR15";
+                    return xmls;
+                }
+                /// cout << "element text: -" << elementText << "-" << endl;
+                xmls.appendText(id.top(), elementText);
             }else{
-                cout << "no element text" << endl;
+                /// cout << "no element text" << endl;
             }
         }
         n = j + 1;
     }
-    return "VALID";
+    if(!tags.empty()){
+        error = "ERROR100";
+    }
+    error = "VALID";
+    return xmls;
 }
 
 bool XMLValidator::getText(int &i, string &content, string &text){
     int j = i;
     if(!getStartOfTag(i, content)) return false;
     text = content.substr(j, i - j);
+    int p = 0, q = text.size() - 1;
+    skipWhiteSpace(p, text);
+    while(q >= 0 && isWhiteSpace(text[q])) q--;
+    text = text.substr(p, q - p + 1);
     return true;
 }
 bool XMLValidator::getStartOfTag(int &i, string &content){

@@ -5,6 +5,7 @@
 class XMLStructure{
 public:
     XMLStructure(string key = "root", string id = "0");
+    void setRootValues(string key, string id);
 	string addElement(string id, string newKey, string newText = "", string newId = "");
 	bool removeElement(string id);
 	void setText(string id, string text);

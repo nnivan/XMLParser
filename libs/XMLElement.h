@@ -4,6 +4,7 @@
 class XMLElement{
 public:
     XMLElement(string key = "", string text = "", string id = "");
+    void setRootValues(string key, string id);
     void set(string key, string text);
     void set(string key, string text, string id);
     void setKey(string key);
