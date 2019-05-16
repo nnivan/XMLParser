@@ -17,9 +17,16 @@ int main(){
     XMLReader reader;
     fileContent = reader.readFile("worstCase.xml");
     xmls = XMLValidator::getValidXMLStructureFromString(fileContent, errormsg);
-    cout << xmls.toString() << endl;
-    cout << errormsg << endl;
+    // cout << xmls.toString() << endl;
+    // cout << errormsg << endl;
 
+    vector<XMLElement> v;
+    xmls.fillVectorWithElements(xmls.getRootId(), v);
+
+    for(int i = 0; i < v.size(); i++){
+        cout << "Element[" << i << "]:" << endl;
+        cout << v[i].toString() << endl;
+    }
     /*XMLStructure xmls("bookstore");
     xmls.addPrologAttribute("version", "1.0");
     xmls.addPrologAttribute("encoding", "UTF-8");

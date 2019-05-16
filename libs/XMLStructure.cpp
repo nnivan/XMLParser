@@ -135,6 +135,23 @@ string XMLStructure::toString() const {
     ret += this->root.toString();
     return ret;
 }
+void XMLStructure::fillVectorWithElements(string id, vector<XMLElement> &elements){
+    XMLElement* temp = findElement(id);
+    if(temp){
+        XMLElement current = *temp;
+        elements.push_back(current);
+        this->fillVectorWithElementsRecursive(&current, elements);
+    }
+}
+
+void XMLStructure::fillVectorWithElementsRecursive(XMLElement* current, vector<XMLElement> &elements){
+    XMLElement next;
+    for(int i = 0; i < current->sizeChildElement(); i++){
+        next = *(current->getChildElement(i));
+        elements.push_back(next);
+        this->fillVectorWithElementsRecursive(&next, elements);
+    }
+}
 
 XMLElement* XMLStructure::findElementRecursive(XMLElement* current, string id){
 

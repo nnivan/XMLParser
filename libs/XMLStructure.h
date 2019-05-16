@@ -20,8 +20,10 @@ public:
 	void removePrologAttribute(string name);
 	string getRootId() const;
 	const XMLElement getRootElement() const;
+	void fillVectorWithElements(string id, vector<XMLElement> &elements);
 	string toString() const;
 private:
+	void fillVectorWithElementsRecursive(XMLElement* current, vector<XMLElement> &elements);
     XMLElement* findElementRecursive(XMLElement* current, string id);
 	XMLElement* findElement(string id);
 	XMLElement* findElementParentRecursive(XMLElement* current, string id);
