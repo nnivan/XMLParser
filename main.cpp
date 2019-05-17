@@ -9,6 +9,7 @@ using namespace std;
 #include "libs\XMLStructure.h"
 #include "libs\XMLValidator.h"
 #include "libs\XMLReader.h"
+#include "libs\XMLXPath.h"
 
 int main(){
     // getValidXMLStructureFromString
@@ -20,12 +21,11 @@ int main(){
     // cout << xmls.toString() << endl;
     // cout << errormsg << endl;
 
-    vector<XMLElement> v;
-    xmls.fillVectorWithElements(xmls.getRootId(), v);
-
-    for(int i = 0; i < v.size(); i++){
-        cout << "Element[" << i << "]:" << endl;
-        cout << v[i].toString() << endl;
+    string xpathCommand;
+    string result;
+    while(cin >> xpathCommand){
+        result = XMLXPath::XPath(xpathCommand, xmls);
+        cout << "XPath result:" << endl << result << endl;
     }
     /*XMLStructure xmls("bookstore");
     xmls.addPrologAttribute("version", "1.0");

@@ -21,6 +21,11 @@ public:
     int sizeAttribute() const;
     Attribute* getAttribute(int i);
     void removeAttribute(int i);
+    bool hasChildElement(string key);
+    XMLElement* getChildElementByKey(string key);
+    bool hasAttribute(string name);
+    string getAttributeValueByName(string name);
+    bool hasData(string dataName, string dataValue);
 	string toString(int tabs = 0) const;
 private:
     void doSetKey(string key);

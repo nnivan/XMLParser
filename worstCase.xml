@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bookstore>
-    <book id="1" category="children" > 
+    <book id="1" category="children"> 
+        <address main="true" phone="789789789">Sofia</address>
+        <address main="false" phone="456456456">Berlin</address>
+        <address main="false">Madrid</address>
         <title>Harry Potter</title>
         <author>J K. Rowling</author>
         <year>2005</year>
         <price>29.99</price>
     </book>
     <book id="2" category="web">
+        <address main="false">Sofia</address>
+        <address main="false">London</address>
+        <address main="true" phone="123123123">Paris</address>
         <title>Learning XML</title>wtf1
         <author>Erik T. Ray</author>wtf2
         <year>2003</year>wtf3

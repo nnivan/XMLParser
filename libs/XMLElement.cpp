@@ -81,6 +81,74 @@ void XMLElement::removeAttribute(int i) {
     this->attributes.erase(this->attributes.begin() + i);
 }
 
+
+bool XMLElement::hasChildElement(string key){
+    for(int i = 0; i < this->childElements.size(); i++){
+        if(this->childElements[i].getKey() == key){
+            return true;
+        }
+    }
+    return false;
+}
+
+XMLElement* XMLElement::getChildElementByKey(string key){
+    for(int i = 0; i < this->childElements.size(); i++){
+        if(this->childElements[i].getKey() == key){
+            return &(this->childElements[i]);
+        }
+    }
+    return nullptr;
+}
+
+bool XMLElement::hasAttribute(string name){
+    if(name == "id" and this->id != "") return true;
+    for(int i = 0; i < this->attributes.size(); i++){
+        if(this->attributes[i].getName() == name){
+            return true;
+        }
+    }
+    for(int i = 0; i < this->childElements.size(); i++){
+        if(this->childElements[i].getKey() == name){
+            return true;
+        }
+    }
+    return false;
+}
+
+string XMLElement::getAttributeValueByName(string name){
+    if(name == "id") return this->id;
+    for(int i = 0; i < this->attributes.size(); i++){
+        if(this->attributes[i].getName() == name){
+            return this->attributes[i].getValue();
+        }
+    }
+    for(int i = 0; i < this->childElements.size(); i++){
+        if(this->childElements[i].getKey() == name){
+            return this->childElements[i].getText();
+        }
+    }
+    return "";
+}
+
+bool XMLElement::hasData(string dataName, string dataValue){
+    if(dataName == "id" and dataValue == this->id) return true;
+    for(int i = 0; i < this->childElements.size(); i++){
+        if(this->childElements[i].getKey() == dataName){
+            if(this->childElements[i].getText() == dataValue){
+                return true;
+            }
+        }
+    }
+    for(int i = 0; i < this->attributes.size(); i++){
+        if(this->attributes[i].getName() == dataName){
+            if(this->attributes[i].getValue() == dataValue){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 string XMLElement::toString(int tabs) const {
     string ret = "";
 
