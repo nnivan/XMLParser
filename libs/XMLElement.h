@@ -22,7 +22,6 @@ public:
     Attribute* getAttribute(int i);
     void removeAttribute(int i);
     bool hasChildElement(string key);
-    XMLElement* getChildElementByKey(string key);
     bool hasAttribute(string name);
     string getAttributeValueByName(string name);
     bool hasData(string dataName, string dataValue);

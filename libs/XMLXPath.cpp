@@ -36,7 +36,7 @@ string XMLXPath::XPath(string command, XMLStructure &xmls){
     		i++;
     		if(command[i] != '/') return "ERROR: EXPECTED '/' AFTER ']'";
     		// cout << "get element -" << elementName << "- ";
-    		// cout << "with index -" << index << "-" << endl;
+    		// cout << "with index -" << index << "-" << endl; 
     		x.removeElementsByTag(elements, elementName);
     		x.removeElementsByIndex(elements, index);
 		}else if( command[i] == '('){
@@ -73,16 +73,14 @@ string XMLXPath::XPath(string command, XMLStructure &xmls){
     }
     string result = "";
     if(at){
-    	if(elements.size() > 0) result += elements[0].getAttributeValueByName(attributeName);
-	    for(int i = 1; i < elements.size(); i++){
+	    for(int i = 0; i < elements.size(); i++){
 	    	string temp = elements[i].getAttributeValueByName(attributeName);
-	    	if(temp != "") result +=  "\n" + temp;
+	    	if(temp != "") result += temp + "\n";
 	    }
     }else{
-    	if(elements.size() > 0) result += elements[0].getText();
-	    for(int i = 1; i < elements.size(); i++){
+	    for(int i = 0; i < elements.size(); i++){
 	    	string temp = elements[i].getText();
-	    	if(temp != "") result +=  "\n" + temp;
+	    	if(temp != "") result += temp + "\n";
 	    }
 	}
     return result;

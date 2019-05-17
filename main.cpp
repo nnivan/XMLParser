@@ -10,6 +10,7 @@ using namespace std;
 #include "libs\XMLValidator.h"
 #include "libs\XMLReader.h"
 #include "libs\XMLXPath.h"
+#include "libs\XMLParser.h"
 
 int main(){
     // getValidXMLStructureFromString
@@ -25,7 +26,7 @@ int main(){
     string result;
     while(cin >> xpathCommand){
         result = XMLXPath::XPath(xpathCommand, xmls);
-        cout << "XPath result:" << endl << result << endl;
+        cout << "XPath result:" << endl << result;
     }
     /*XMLStructure xmls("bookstore");
     xmls.addPrologAttribute("version", "1.0");

@@ -9,13 +9,13 @@
         <year>2005</year>
         <price>29.99</price>
     </book>
-    <book id="2" category="web">
+    <book id="2" category="web">textToBook2
         <address main="false">Sofia</address>
         <address main="false">London</address>
         <address main="true" phone="123123123">Paris</address>
-        <title>Learning XML</title>wtf1
-        <author>Erik T. Ray</author>wtf2
-        <year>2003</year>wtf3
-        <price>39.95</price>wtf4
+        <title>Learning XML</title>moreTextToBook2
+        <author>Erik T. Ray</author>
+        <year>2003</year>
+        <price>39.95</price>
     </book>
 </bookstore>

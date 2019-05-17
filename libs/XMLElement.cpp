@@ -91,14 +91,6 @@ bool XMLElement::hasChildElement(string key){
     return false;
 }
 
-XMLElement* XMLElement::getChildElementByKey(string key){
-    for(int i = 0; i < this->childElements.size(); i++){
-        if(this->childElements[i].getKey() == key){
-            return &(this->childElements[i]);
-        }
-    }
-    return nullptr;
-}
 
 bool XMLElement::hasAttribute(string name){
     if(name == "id" and this->id != "") return true;
