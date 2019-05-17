@@ -1,9 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <stack>
 using namespace std;
 
+#include "StackString.h"
 #include "XMLAttribute.h"
 #include "XMLElement.h"
 #include "XMLStructure.h"
@@ -69,8 +69,8 @@ XMLStructure XMLValidator::getValidXMLStructureFromString(string content, string
         return xmls;
     }
 
-    stack<string> tags;
-    stack<string> id;
+    StackString tags;
+    StackString id;
 
     while( n < content.size() ){
         string elementKey = "";

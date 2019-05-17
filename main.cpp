@@ -1,9 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <stack>
 using namespace std;
 
+#include "libs\StackString.h"
 #include "libs\XMLAttribute.h"
 #include "libs\XMLElement.h"
 #include "libs\XMLStructure.h"
@@ -13,6 +13,8 @@ using namespace std;
 #include "libs\XMLParser.h"
 
 int main(){
+
+    
     // getValidXMLStructureFromString
     XMLStructure xmls;
     string path, fileContent, errormsg;

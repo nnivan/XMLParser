@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <stack>
 using namespace std;
 
 #include "XMLAttribute.h"
