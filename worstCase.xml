@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bookstore>
-    <book id="1" category="children"> 
-        <address main="true" phone="789789789">Sofia</address>
-        <address main="false" phone="456456456">Berlin</address>
-        <address main="false">Madrid</address>
-        <title>Harry Potter</title>
-        <author>J K. Rowling</author>
-        <year>2005</year>
-        <price>29.99</price>
-    </book>
-    <book id="2" category="web">textToBook2
-        <address main="false">Sofia</address>
-        <address main="false">London</address>
-        <address main="true" phone="123123123">Paris</address>
-        <title>Learning XML</title>moreTextToBook2
-        <author>Erik T. Ray</author>
-        <year>2003</year>
-        <price>39.95</price>
-    </book>
+<bookstore id="_1">
+	<book id="1" category="children">
+		<address id="_2" main="true" phone="789789789">Sofia</address>
+		<address id="_3" main="false" phone="456456456">Berlin</address>
+		<address id="_4" main="false">Madrid</address>
+		<title id="_5">Harry Potter</title>
+		<author id="_6">J K. Rowling</author>
+		<year id="_7">2005</year>
+		<price id="_8">29.90</price>
+	</book>
+	<book id="2" category="web">textToBook2 moreTextToBook2
+		<address id="_9" main="false">Sofia</address>
+		<address id="_10" main="false">London</address>
+		<address id="_11" main="true" phone="123123123">Paris</address>
+		<title id="_12">Learning XML</title>
+		<author id="_13">Erik T. Ray</author>
+		<year id="_14">2003</year>
+		<price id="_15">39.95</price>
+	</book>
 </bookstore>

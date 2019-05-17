@@ -120,6 +120,18 @@ string XMLElement::getDataValueByName(string name){
     }
     return "";
 }
+void XMLElement::setDataValueByName(string name, string value){
+    for(int i = 0; i < this->attributes.size(); i++){
+        if(this->attributes[i].getName() == name){
+            return this->attributes[i].setValue(value);
+        }
+    }
+    for(int i = 0; i < this->childElements.size(); i++){
+        if(this->childElements[i].getKey() == name){
+            return this->childElements[i].setText(value);
+        }
+    }
+}
 
 bool XMLElement::hasData(string dataName, string dataValue){
     if(dataName == "id" and dataValue == this->id) return true;

@@ -23,6 +23,7 @@ public:
     bool hasChildElement(string key);
     bool hasDataName(string name);
     string getDataValueByName(string name);
+    void setDataValueByName(string name, string value);
     bool hasData(string dataName, string dataValue);
 	string toString(int tabs = 0) const;
 private:

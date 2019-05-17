@@ -10,9 +10,9 @@ using namespace std;
 #include "XMLXPath.h"
 
 
-string XMLXPath::XPath(string command, XMLStructure &xmls){
+string XMLXPath::XPath(string command, string id, XMLStructure &xmls){
     vector<XMLElement> elements; 
-    xmls.fillVectorWithElements(xmls.getRootId(), elements);
+    xmls.fillVectorWithElements(id, elements);
     XMLXPath x;
     command += '/';
     

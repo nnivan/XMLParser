@@ -7,10 +7,11 @@ public:
     XMLStructure(string key = "root", string id = "0");
     void setRootValues(string key, string id);
 	string addElement(string id, string newKey, string newText = "", string newId = "");
-	bool removeElement(string id);
+	bool removeElement(string id); 
 	void setText(string id, string text);
 	void appendText(string id, string text);
 	string getText(string id);
+	XMLElement* getElementById(string id);
 	void addAttribute(string id, string name, string value);
 	void setAttributeValue(string id, string name, string value);
 	bool removeAttribute(string id, string attributeName);
@@ -18,6 +19,7 @@ public:
     int sizePrologAttribute() const;
     Attribute* getPrologAttribute(int i);
 	void removePrologAttribute(string name);
+	Attribute* getPrologAttributeByName(string name);
 	string getRootId() const;
 	const XMLElement getRootElement() const;
 	void fillVectorWithElements(string id, vector<XMLElement> &elements);

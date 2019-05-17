@@ -63,7 +63,17 @@ void XMLStructure::appendText(string id, string text){
 
 string XMLStructure::getText(string id){
     XMLElement* temp = findElement(id);
-    return temp->getText();
+    if(temp){
+        return temp->getText();
+    }else{
+        return "";
+    }
+}
+
+
+XMLElement* XMLStructure::getElementById(string id){
+    XMLElement* temp = findElement(id);
+    return temp;
 }
 
 void XMLStructure::addAttribute(string id, string name, string value){
@@ -113,6 +123,16 @@ void XMLStructure::removePrologAttribute(string name){
             return;
         }
     }
+}
+
+
+Attribute* XMLStructure::getPrologAttributeByName(string name){
+    for(int i = 0; i < this->prolog.size(); i++){
+        if(this->prolog[i].getName() == name){
+            return &(this->prolog[i]);
+        }
+    }
+    return nullptr;
 }
 
 string XMLStructure::getRootId() const {

@@ -3,7 +3,7 @@
 
 class XMLXPath{
 public:
-	static string XPath(string command, XMLStructure &xml);
+	static string XPath(string command, string id, XMLStructure &xml);
 private:
 	void removeElementsByTag(vector<XMLElement> &elements, string tagName);
 	void removeElementsByIndex(vector<XMLElement> &elements, int index);
