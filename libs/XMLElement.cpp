@@ -91,7 +91,7 @@ bool XMLElement::hasChildElement(string key){
 }
 
 
-bool XMLElement::hasAttribute(string name){
+bool XMLElement::hasDataName(string name){
     if(name == "id" and this->id != "") return true;
     for(int i = 0; i < this->attributes.size(); i++){
         if(this->attributes[i].getName() == name){
@@ -106,7 +106,7 @@ bool XMLElement::hasAttribute(string name){
     return false;
 }
 
-string XMLElement::getAttributeValueByName(string name){
+string XMLElement::getDataValueByName(string name){
     if(name == "id") return this->id;
     for(int i = 0; i < this->attributes.size(); i++){
         if(this->attributes[i].getName() == name){

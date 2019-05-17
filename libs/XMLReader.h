@@ -4,7 +4,7 @@
 class XMLReader{
 public:
     string readFile(string path);
-    void writeFile(string path, string data);
+    string writeFile(string path, string data);
 private:
     ifstream input;
     ofstream output;

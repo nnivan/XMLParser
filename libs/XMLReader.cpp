@@ -17,17 +17,18 @@ string XMLReader::readFile(string path){
     }
 
     input.close();
-    return "ERROR OPENING FILE\n";
+    return "ERROR";
 }
 
-void XMLReader::writeFile(string path, string data){
+string XMLReader::writeFile(string path, string data){
     output.open(path.c_str());
 
     if(output.is_open()){
         output << data;
         output.close();
+        return "VALID";
     }
 
-    input.close();
-    return;
+    output.close();
+    return "ERROR";
 }

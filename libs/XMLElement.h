@@ -4,7 +4,6 @@
 class XMLElement{
 public:
     XMLElement(string key = "", string text = "", string id = "");
-    void setRootValues(string key, string id);
     void set(string key, string text);
     void set(string key, string text, string id);
     void setKey(string key);
@@ -22,8 +21,8 @@ public:
     Attribute* getAttribute(int i);
     void removeAttribute(int i);
     bool hasChildElement(string key);
-    bool hasAttribute(string name);
-    string getAttributeValueByName(string name);
+    bool hasDataName(string name);
+    string getDataValueByName(string name);
     bool hasData(string dataName, string dataValue);
 	string toString(int tabs = 0) const;
 private:

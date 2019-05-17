@@ -14,7 +14,11 @@ using namespace std;
 
 int main(){
 
-    
+    XMLParser parser;
+    // parser.commandLineInteface(cin, cout);
+    parser.commandLineInteface();
+
+    /*
     // getValidXMLStructureFromString
     XMLStructure xmls;
     string path, fileContent, errormsg;
@@ -30,6 +34,8 @@ int main(){
         result = XMLXPath::XPath(xpathCommand, xmls);
         cout << "XPath result:" << endl << result;
     }
+    */
+
     /*XMLStructure xmls("bookstore");
     xmls.addPrologAttribute("version", "1.0");
     xmls.addPrologAttribute("encoding", "UTF-8");

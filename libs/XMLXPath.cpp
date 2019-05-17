@@ -73,7 +73,7 @@ string XMLXPath::XPath(string command, XMLStructure &xmls){
     string result = "";
     if(at){
 	    for(int i = 0; i < elements.size(); i++){
-	    	string temp = elements[i].getAttributeValueByName(attributeName);
+	    	string temp = elements[i].getDataValueByName(attributeName);
 	    	if(temp != "") result += temp + "\n";
 	    }
     }else{
@@ -111,7 +111,7 @@ void XMLXPath::removeElementsByIndex(vector<XMLElement> &elements, int index){
 void XMLXPath::removeElementsByAttribute(vector<XMLElement> &elements, string dataName){
 	vector<XMLElement> result;
 	for(int i = 0; i < elements.size(); i++){
-		if(elements[i].hasAttribute(dataName) or elements[i].hasChildElement(dataName)){
+		if(elements[i].hasDataName(dataName) or elements[i].hasChildElement(dataName)){
 			XMLElement temp = elements[i];
 			result.push_back(temp);
 		}
