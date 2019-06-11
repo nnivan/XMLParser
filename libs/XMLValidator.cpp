@@ -11,63 +11,75 @@ using namespace std;
 
 XMLStructure XMLValidator::getValidXMLStructureFromString(string content, string &error){
 
-    XMLStructure xmls;
-
-    content.append("        ");
     XMLValidator v;
-    int n = 0, j = 0;
-    v.skipWhiteSpace(n, content);
+    XMLStructure xmls;
+    int n = 0;//, j = 0;
+    content.append("        "); 
+
+    if(!v.getValidPrologAttributes(n, xmls, content, error)) return xmls;
+    if(!v.getValidElements(n, xmls, content, error)) return xmls;
+
+    return xmls;
+}
+
+bool XMLValidator::getValidPrologAttributes(int &n, XMLStructure& xmls, string content, string &error){
+    int j;
+    skipWhiteSpace(n, content);
     if(content[n] != '<') {
         error = "ERROR1";
-        return xmls;
+        return false;
     }
     if(content[n+1] == '?'){
         /// cout<<"Prolog:"<<endl;
         if(content[n+2] != 'x') {
             error = "ERROR2";
-            return xmls;
+            return false;
         }
         if(content[n+3] != 'm') {
             error = "ERROR3";
-            return xmls;
+            return false;
         }
         if(content[n+4] != 'l') {
             error = "ERROR4";
-            return xmls;
+            return false;
         }
         n = n + 5;
         j = n;
-        if(!v.getEndOfProlog(j, content)) {
+        if(!getEndOfProlog(j, content)) {
             error = "ERROR5";
-            return xmls;
+            return false;
         }
         if(content[j] != '?') {
             error = "ERROR6";
-            return xmls;
+            return false;
         }
         while(n < j){
             string attributeName, attributeValue;
-            if(!v.getAttribute(n, content, attributeName, attributeValue)) {
+            if(!getAttribute(n, content, attributeName, attributeValue)) {
                 error = "ERROR7";
-                return xmls;
+                return false;
             }
             /// cout << "\t(name:" << attributeName << ", ";
             /// cout << "value:" << attributeValue << ")" << endl;
             xmls.addPrologAttribute(attributeName, attributeValue);
-            v.skipWhiteSpace(n, content);
+            skipWhiteSpace(n, content);
         }
         n = n + 2;
     }
-    v.skipWhiteSpace(n, content);
+    skipWhiteSpace(n, content);
     if(content[n++] != '<') {
         error = "ERROR8";
-        return xmls;
+        return false;
     }
 
     if(content[n] == '/') {
         error = "ERROR9";
-        return xmls;
+        return false;
     }
+    return true;
+}
+bool XMLValidator::getValidElements(int &n, XMLStructure& xmls, string content, string &error){
+    int j;
 
     StackString tags;
     StackString id;
@@ -78,46 +90,46 @@ XMLStructure XMLValidator::getValidXMLStructureFromString(string content, string
         string elementText = "";
         if(content[n] == '/'){
             n = n + 1;
-            if(!v.getTagName(n, content, elementKey)) {
+            if(!getTagName(n, content, elementKey)) {
                 error = "ERROR10";
-                return xmls;
+                return false;
             }
             /// cout<<"-close element:"<<elementKey<<"-"<<endl;
-            v.skipWhiteSpace(n, content);
+            skipWhiteSpace(n, content);
             if(content[n] != '>') {
                 error = "ERROR11";
-                return xmls;
+                return false;
             }
             n = n + 1;
 
             if(tags.empty()) {
                 error = "ERROR101";
-                return xmls;
+                return false;
             }
             if(tags.top() != elementKey) {
                 error = "ERROR102";
-                return xmls;
+                return false;
             }
             tags.pop();
             id.pop();
         }else{
-            if(!v.getTagName(n, content, elementKey)) {
+            if(!getTagName(n, content, elementKey)) {
                 error = "ERROR12";
-                return xmls;
+                return false;
             }
             /// cout<<"-open element:"<<elementKey<<"-"<<endl;
-            v.skipWhiteSpace(n, content);
+            skipWhiteSpace(n, content);
             j = n;
-            if(!v.getEndOfTag(j, content)) {
+            if(!getEndOfTag(j, content)) {
                 error = "ERROR13";
-                return xmls;
+                return false;
             }
             vector< Attribute > attributes;
             while(n < j){
                 string attributeName, attributeValue;
-                if(!v.getAttribute(n, content, attributeName, attributeValue)) {
+                if(!getAttribute(n, content, attributeName, attributeValue)) {
                     error = "ERROR14";
-                    return xmls;
+                    return false;
                 }
                 /// cout << "\tAttribute(name:" << attributeName << ", ";
                 /// cout << "value:" << attributeValue << ")"<<endl;
@@ -126,7 +138,7 @@ XMLStructure XMLValidator::getValidXMLStructureFromString(string content, string
                 }else{
                     attributes.push_back( Attribute(attributeName, attributeValue) );
                 }
-                v.skipWhiteSpace(n, content);
+                skipWhiteSpace(n, content);
             }
             /// cout << "element id:" << elementId <<endl;
             n = n + 1;
@@ -148,19 +160,19 @@ XMLStructure XMLValidator::getValidXMLStructureFromString(string content, string
         }
 
         j = n;
-        v.skipWhiteSpace(j, content);
+        skipWhiteSpace(j, content);
 
         if(tags.empty()){
             if(j < content.size()){
                 error = "ERROR16";
-                return xmls;
+                return false;
             }
         }else{
             if(content[j] != '<'){
                 j = n;
-                if(!v.getText(j, content, elementText)) {
+                if(!getText(j, content, elementText)) {
                     error = "ERROR15";
-                    return xmls;
+                    return false;
                 }
                 /// cout << "element text: -" << elementText << "-" << endl;
                 xmls.appendText(id.top(), elementText);
@@ -174,7 +186,7 @@ XMLStructure XMLValidator::getValidXMLStructureFromString(string content, string
         error = "ERROR100";
     }
     error = "VALID";
-    return xmls;
+    return true;
 }
 
 bool XMLValidator::getText(int &i, string &content, string &text){
